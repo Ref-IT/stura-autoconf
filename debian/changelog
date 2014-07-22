@@ -1,3 +1,15 @@
+stura-autoconf (0.0.1-103) precise; urgency=low
+
+  * fixup /etc/hosts only content not being replaced
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 22 Jul 2014 16:56:42 +0200
+
+stura-autoconf (0.0.1-102) precise; urgency=low
+
+  * fixup /etc/hosts only content not being replaced
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 22 Jul 2014 16:56:42 +0200
+
 stura-autoconf (0.0.1-101) precise; urgency=low
 
   * change ip subnet
