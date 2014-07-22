@@ -23,7 +23,7 @@ else
 	FALSE "7" "Schließsystem" );
 
   DIR=""
-  SRC="@141.24.40.67:/raid/"
+  SRC="@141.24.44.131:/raid/"
   SRCDIR=""
   USR=""
   password=""
