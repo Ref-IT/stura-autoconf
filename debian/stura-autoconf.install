@@ -1,0 +1,4 @@
+start-stop-stura.sh		/usr/bin/
+printer-restart-stura.bash	/usr/bin/
+stura-lightdm-session-setup.sh	/usr/bin/
+stura-lightdm-session-cleanup.sh	/usr/bin/

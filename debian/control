@@ -1,0 +1,15 @@
+Source: stura-autoconf
+Section: admin
+Priority: extra
+Maintainer: Michael Braun <michael-dev@fami-braun.de>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://stura.tu-ilmenau.de/wiki/index.php/IT-Arbeitspl%C3%A4tze#Software
+
+Package: stura-autoconf
+Architecture: all
+Depends: ${misc:Depends}, adobe-flashplugin, amarok, apt-listchanges, apticron, audacity, autofs5, avahi-discover, biblatex, biblatex-dw, booklet, bouml, browser-plugin-vlc, build-essential, bwm-ng, chromium-browser, chromium-browser-l10n, chromium-codecs-ffmpeg-extra, debhelper, debsums, desktop-base, disper, dpkg-dev, dput, enigmail, etckeeper, extundelete, filezilla, fuseext2, fusefat, fuseiso9660, gaststick, gimp, gimp-help-de, git, git-svn, gitk, gnome, gnome-session-fallback, gnucash, gpsbabel, gstreamer0.10-ffmpeg, gstreamer0.10-plugins-bad, gv, htop, hyphen-de, indicator-printers, jabref, jabref-plugin-oo, kalarm, kde-l10n-de, khelpcenter4, kile, kile-doc, ktouch, kyoscand, lame, language-pack-kde-de, latexdiff, libreoffice, libreoffice-help-de, libreoffice-l10n-de, libreoffice-ogltrans, libreoffice-pdfimport, libreoffice-presentation-minimizer, libreoffice-presenter-console, libreoffice-wiki-publisher, libreoffice-writer2latex, libreoffice-writer2xhtml, libxine1-ffmpeg, linux-headers-generic, lyx, mc, memtest86+, memtester, moodbar, mypaint, mythes-de, nautilus-dropbox, ncpfs, nmap, numlockx, okular, okular-extra-backends, openclipart, openssh-server, p7zip, p7zip-full, p7zip-rar, page-crunch, paprefs, pavucontrol, pavumeter, pdfedit, pdfjam, phatch, python-gpgme, pidgin, pidgin-otr, postfix-pcre, pulseaudio-module-zeroconf, qtiplot, qtiplot-doc, rar, screen, scribus, scribus-doc, scribus-template, smart-notifier, smbfs, smplayer, sshfs, stgit, subversion-tools, texlive-full, texmaker, thunderbird, thunderbird-gnome-support, thunderbird-locale-de, tshark, ttf-mscorefonts-installer, tuilmenaufonts, ubuntustudio-font-meta, ubuntustudio-graphics, unrar, vim-gnome, virtualbox-guest-additions-iso, virtualbox, vlc, vmware-view-open-client, wdfs, wdiff, whitedune, whitedune-docs, wireshark, xournal, xpdf, xul-ext-lightning, xvnc4viewer, zenity
+Pre-Depends: postfix, bash, distcc, firefox, lightdm, hostname, lldpd, ntp, sed, smartmontools, unattended-upgrades, puppet, network-manager-openvpn-gnome, openvpn, stunnel4
+Conflicts: samba
+Replaces: flashplugin-installer
+Description: install default workplace

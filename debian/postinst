@@ -1,0 +1,386 @@
+#!/bin/sh
+# postinst script for stura-autoconf
+#
+# see: dh_installdeb(1)
+
+# do not stop if errors occur
+set +e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <postinst> `abort-remove'
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see http://www.debian.org/doc/debian-policy/ or
+# the debian-policy package
+
+
+case "$1" in
+    configure)
+
+      # *** configure mail ***
+      echo "box.stura.tu-ilmenau.de" > /etc/mailname
+      echo "/^Subject:(.*)/ REPLACE Subject: [$(hostname)]\$1" > /etc/postfix/smtp_header_checks.pcre
+      echo "/.*/	ref-it@tu-ilmenau.de" > /etc/postfix/sender_canonical
+
+      echo "# require helo
+smtpd_delay_reject  = yes
+smtpd_helo_required = yes
+
+strict_rfc821_envelopes = yes
+
+biff = no
+
+append_dot_mydomain = no
+
+myorigin = /etc/mailname
+myhostname = box.stura.tu-ilmenau.de
+mydestination = \$myorigin,\$myhostname,localhost,localhost.\$mydomain,akeller,$(hostname)
+smtp_helo_name = box.stura.tu-ilmenau.de
+alias_maps = hash:/etc/aliases
+
+alias_database = hash:/etc/aliases
+local_recipient_maps = proxy:unix:passwd.byname \$alias_maps
+
+mynetworks = 127.0.0.0/8
+
+message_size_limit = 0
+mailbox_size_limit = 0
+virtual_mailbox_limit = 0
+recipient_delimiter = +
+inet_interfaces = 127.0.0.1
+
+smtpd_recipient_restrictions = permit_mynetworks, reject
+
+#Hostname header
+smtp_header_checks = pcre:/etc/postfix/smtp_header_checks.pcre
+smtp_tls_security_level = may
+canonical_classes = envelope_sender
+canonical_maps = pcre:/etc/postfix/sender_canonical
+
+#SASL authentication
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain =
+broken_sasl_auth_clients = yes
+smtpd_tls_auth_only = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_local_domain =  \$myorigin" > /etc/postfix/main.cf
+
+    # sasl_passwd contains [mail.fem.tu-ilmenau.de]	username:password
+    if [ -e /etc/postfix/sasl_passwd ]; then
+      echo 'smtp_sasl_auth_enable = yes      
+relayhost = [mail.fem.tu-ilmenau.de]
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+' >> /etc/postfix/main.cf
+   fi
+
+    service postfix restart
+
+    # **** configure smartmontools ****
+    echo "DEVICESCAN -a -o on -S on -s (S/../.././02|L/../../6/03) -W 2,50,55 -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner" > /etc/smartd.conf
+    sed -i 's/^#start_smartd=yes/start_smartd=yes/' /etc/default/smartmontools
+    service smartmontools stop
+    service smartmontools start
+
+    # **** configure distcc ****
+    sed -i 's/^STARTDISTCC="false"/STARTDISTCC="true"/' /etc/default/distcc
+    sed -i 's/^ALLOWEDNETS="127.0.0.1"/ALLOWEDNETS="127.0.0.1 141.24.40.0\/24"/' /etc/default/distcc
+    sed -i 's/^LISTENER="127.0.0.1"/#LISTENER="127.0.0.1"/' /etc/default/distcc
+    sed -i 's/^ZEROCONF="false"/ZEROCONF="true"/' /etc/default/distcc
+    service distcc stop
+    service distcc start
+
+    # configure ntp
+    for i in aletheia.a-keller timesrv1.tu-ilmenau.de timesrv2.tu-ilmenau.de; do
+      grep "^server $i" /etc/ntp.conf
+      if [ $? -ne 0 ]; then
+        echo "server $i" >> /etc/ntp.conf
+      fi
+    done
+
+    # default browser
+    update-alternatives --set x-www-browser /usr/bin/firefox
+    update-alternatives --set gnome-www-browser /usr/bin/firefox
+
+    # add user if missing
+    adduser --no-create-home gast
+    #usermod -d /tmp/home_gast gast # does not work if user is already logged in
+    sed -i 's/^\(gast:.*\):\([^:]*\):\([^:]*\)$/\1:\/tmp\/home_gast:\3/' /etc/passwd
+    deluser gast lpadmin
+    adduser gast adm
+    adduser gast dialout
+    adduser gast fax
+    adduser gast cdrom
+    adduser gast floppy
+    adduser gast tape
+    adduser gast audio
+    adduser gast dip
+    adduser gast video
+    adduser gast plugdev
+    adduser gast fuse
+    adduser gast netdev
+    adduser gast admin
+    adduser gast nopasswdlogin
+    adduser gast sambashare
+    adduser gast gast
+    adduser gast vboxusers
+
+    chown root.shadow /etc/shadow
+
+    # add email aliases
+    for usr in $(getent passwd | awk -F ':' '{print $1}'); do
+      grep "^$usr:" /etc/aliases
+      if [ $? -ne 0 ]; then
+        echo "$usr: ref-it@tu-ilmenau.de" >> /etc/aliases
+        newaliases
+      fi
+    done
+
+    # add permissions
+    echo "ALL ALL=NOPASSWD:/usr/local/bin/start-stop-stura.sh" > /etc/sudoers.d/stura
+    chmod 0440 /etc/sudoers.d/stura
+    grep -v "^#includedir /etc/sudoers.d" /etc/sudoers > /etc/sudoers.tmp
+    echo "#includedir /etc/sudoers.d" >> /etc/sudoers.tmp
+    cat /etc/sudoers.tmp > /etc/sudoers
+    chown root.root /etc/sudoers
+    chmod 0440 /etc/sudoers
+
+    # configure autoupdate
+    echo 'APT::Periodic::Enable "1";
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "5";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::RandomSleep "1800";' > /etc/apt/apt.conf.d/10periodic
+    echo 'Unattended-Upgrade::Allowed-Origins {
+  "${distro_id} stable";
+  "Canonical ${distro_codename}";
+  "${distro_id} ${distro_codename}-security";
+  "${distro_id} ${distro_codename}-updates";
+  "LP-PPA-sturait-bugfixes ${distro_codename}";
+  "Medibuntu ${distro_codename}";
+  "Dropbox.com ${distro_codename}";
+};
+Unattended-Upgrade::AutoFixInterruptedDpkg "true";' > /etc/apt/apt.conf.d/50unattended-upgrades
+
+    # fix login
+    grep "pam_mkhomedir" /etc/pam.d/common-session
+    if [ $? -ne 0 ]; then
+      echo "session required pam_mkhomedir.so skel=/etc/skel umask=0022" >> /etc/pam.d/common-session
+    fi
+
+    echo '[daemon]
+TimedLoginEnable=false
+AutomaticLoginEnable=true
+TimedLogin=gast
+AutomaticLogin=gast
+TimedLoginDelay=10
+DefaultSession=gnome' > /etc/gdm.conf
+
+    for i in 'autologin-user=gast' 'autologin-session=gnome-fallback' 'user-session=gnome-fallback' 'greeter-session=unity-greeter' 'allow-guest=false' 'greeter-setup-script=/usr/bin/numlockx on' 'session-setup-script=/usr/bin/stura-lightdm-session-setup.sh' 'session-cleanup-script=/usr/bin/stura-lightdm-session-cleanup.sh'; do
+      grep -F "$i" /etc/lightdm/lightdm.conf
+      if [ $? -ne 0 ]; then
+        j=$(echo "$i" | sed 's/=.*//');
+        grep -v "^$j=" /etc/lightdm/lightdm.conf > /etc/lightdm/lightdm.conf.tmp && cat /etc/lightdm/lightdm.conf.tmp > /etc/lightdm/lightdm.conf && rm -f /etc/lightdm/lightdm.conf.tmp
+        echo "$i" >> /etc/lightdm/lightdm.conf
+      fi
+    done
+
+      # fix package source
+      sed -i 's/de.archive.ubuntu.com/ftp.tu-ilmenau.de\/mirror/' /etc/apt/sources.list
+      # add scribus repo for stable version
+      # see http://wiki.scribus.net/canvas/Debian
+      echo 'deb http://debian.scribus.net/debian/ precise main
+            deb http://debian.tagancha.org/debian/ precise main' > /etc/apt/sources.list.d/scribus.list
+      apt-key adv --list-keys EEF818CF || apt-key adv --recv-keys --keyserver x-hkp://wwwkeys.pgp.net EEF818CF
+      # add dropbox
+      echo 'deb http://linux.dropbox.com/ubuntu precise main' > /etc/apt/sources.list.d/dropbox.list
+      apt-key adv --list-keys 5044912E || apt-key adv --recv-keys --keyserver x-hkp://wwwkeys.pgp.net 5044912E
+
+      # configure lldpd
+      grep "^DAEMON_ARGS=" /etc/default/lldpd
+      if [ $? -ne 0 ]; then
+        echo 'DAEMON_ARGS="-c"' >> /etc/default/lldpd
+        service lldpd stop
+        service lldpd start
+      fi
+
+      # fix start-stop-sture
+      rm -f /usr/local/bin/start-stop-stura.sh
+      ln -s /usr/bin/start-stop-stura.sh /usr/local/bin/
+
+      # add cronjob for printer-restart-stura.bash
+      echo "*/5 * * * *	localadmin	printer-restart-stura.bash" > /etc/cron.d/printer-restart-stura
+      
+      # add ssh known hosts
+      # backup-storage
+      echo "|1|NQD/4btaxEfr3jQV2CJJCGMsQvA=|oLCFcL6Zh85jmQ7HgsXsXzNYQbg= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG0Flb4q81ksMeuGEIfiavWf3y4Ou8aN3MuhrgfzH/+0EyTfRLJkxyO4tqXGd2vgVH0k60jtyA+5/UH+gA1Zlws=
+|1|QwQXmRBe4tzMosq/GibUa65LYHc=|ZON33ORY9rgvcGsJilaaAeFALpE= ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBG0Flb4q81ksMeuGEIfiavWf3y4Ou8aN3MuhrgfzH/+0EyTfRLJkxyO4tqXGd2vgVH0k60jtyA+5/UH+gA1Zlws=" > /etc/ssh/ssh_known_hosts
+
+      # atlantis
+      echo "|1|CoHSpEAP3BDvKQpNTZMgZWR+bfc=|Jp/vUI/ExLmlSkbhXDQbIRLsvwA= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTM4+Yykv8oNly6mYIfbp1DELLAR0wnuUY1L+SVv7enpa6aHozYQJwwnk76BIQ237WbGAAhJvn8DirCVdeaFMDiFlicUH6w1t5qzOEIhNpd0oHvbX1msBq0Q4w/q/rX1BJQ+HnmLofC9IpKCrJOOPjW7RO9MtS5YKE1/X4TKOmBxmggsuEc52O0OW4VejT7pqWjzPxRGGidSvfPAmcWjD/TZ8g+b1Vgofkf57LV29mILgTjhSaaDoX0e+ekhoCdf0R4LqZ4l3a4qS/Ii0ME1/Z8PNyCNn0u9UmVcMdom4opFUeCgWhuV+YrOTnGV71TW5gpY0xSmIbx7xjOXSJi1FF
+|1|KBDFTUKQQ1nUplxfayOoODb3SP4=|rtG9w1fVlXn67gIhIXZbQbq7aXA= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTM4+Yykv8oNly6mYIfbp1DELLAR0wnuUY1L+SVv7enpa6aHozYQJwwnk76BIQ237WbGAAhJvn8DirCVdeaFMDiFlicUH6w1t5qzOEIhNpd0oHvbX1msBq0Q4w/q/rX1BJQ+HnmLofC9IpKCrJOOPjW7RO9MtS5YKE1/X4TKOmBxmggsuEc52O0OW4VejT7pqWjzPxRGGidSvfPAmcWjD/TZ8g+b1Vgofkf57LV29mILgTjhSaaDoX0e+ekhoCdf0R4LqZ4l3a4qS/Ii0ME1/Z8PNyCNn0u9UmVcMdom4opFUeCgWhuV+YrOTnGV71TW5gpY0xSmIbx7xjOXSJi1FF" >> /etc/ssh/ssh_known_hosts
+      # babylon
+      echo "|1|5CFX4Lw6p2BneX1DSLWtRO60U7c=|nScaiY8OCpJPtbzRJuM2/1QjZQY= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyCSKtuKG0OyGVrcq0mcI8mC7spt11qZlTUHlQ7ExBGU/3lunJD0ILvjgHOUoYF0QwNY1PVDJl/j9AcDriI0sRnks5BunzZ0FY/ZFk3z6P4oMfpKFpp4VDDXS105hCcGkcOwqjYpwGT+mBze/CAJaeizpDHbQR8yUiQGkBn6UzHTvMfTnJ7ca1AQPm4UDYF0gEBDbgTdA11q41JfiiVmcSuTPnXvfsMFjRc2XROYIWVogBgAF1Kkt6GWxJktdP5Str6t8slz4yweINbqRsDfhS1Mn4IOelXTgPf8TrhmxDsHxGcL03necEmDB3HzGXy8xorQ6/MXD5PAJxzxhhAPI7
+|1|QhgU4ub+DMGUKyF3XmpDxbkdXIU=|AJ+oE+E8WLj+CDC5St0DOf/Ey5I= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyCSKtuKG0OyGVrcq0mcI8mC7spt11qZlTUHlQ7ExBGU/3lunJD0ILvjgHOUoYF0QwNY1PVDJl/j9AcDriI0sRnks5BunzZ0FY/ZFk3z6P4oMfpKFpp4VDDXS105hCcGkcOwqjYpwGT+mBze/CAJaeizpDHbQR8yUiQGkBn6UzHTvMfTnJ7ca1AQPm4UDYF0gEBDbgTdA11q41JfiiVmcSuTPnXvfsMFjRc2XROYIWVogBgAF1Kkt6GWxJktdP5Str6t8slz4yweINbqRsDfhS1Mn4IOelXTgPf8TrhmxDsHxGcL03necEmDB3HzGXy8xorQ6/MXD5PAJxzxhhAPI7" >> /etc/ssh/ssh_known_hosts
+      # eureka
+      echo "|1|aQUIOirm+nJ7bhItHoKegRaMePs=|ODnYTlIlI5MTU92DEDPQfU3xt3I= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJ3dGJQQIRh7W7gqRTbqPm139Gr50CEU5KRkmUlN7EoFZMmBRPOA+csy+zTDc0WaghSM8Xose8uajTU5c8rezNVanKpJ8FjEqcpaxYXGdrQHwlpzw7GUA8IprBFvYlAu8pxqF7tzZ8W6Ga7YfRj9TCTZjsOdFj5Z2JnhNbdh9SU3Q7c0ugxgPU4GwcUBVybORVC/YlvHo5CfSEIOdmEl0jdOGnLBLv2JrjMdnh9P/M3wYKBDcGKrFzsKtITEEuZPzyoSAmo+8QCWmhAtFlew9WTa+5FwGkRZylKlhmwS6s5IYi4Ou+SuTuz8RWmgSoopwdMlkaxI6MsBKKEVla2Myl
+|1|8MEG3ElFgKU9LKAfVhfdYxgitow=|j0seH7GK8owOay5/yDjiMhnWY6s= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJ3dGJQQIRh7W7gqRTbqPm139Gr50CEU5KRkmUlN7EoFZMmBRPOA+csy+zTDc0WaghSM8Xose8uajTU5c8rezNVanKpJ8FjEqcpaxYXGdrQHwlpzw7GUA8IprBFvYlAu8pxqF7tzZ8W6Ga7YfRj9TCTZjsOdFj5Z2JnhNbdh9SU3Q7c0ugxgPU4GwcUBVybORVC/YlvHo5CfSEIOdmEl0jdOGnLBLv2JrjMdnh9P/M3wYKBDcGKrFzsKtITEEuZPzyoSAmo+8QCWmhAtFlew9WTa+5FwGkRZylKlhmwS6s5IYi4Ou+SuTuz8RWmgSoopwdMlkaxI6MsBKKEVla2Myl" >> /etc/ssh/ssh_known_hosts
+      # galactica
+      echo "|1|DyQ5sY/TMt6+MpbUVyjeYw1bdS0=|xM7dsUN0K5oVfEq+eADnEsZ3uF8= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCanTV2mznbvU+S+aOPnoXzNBLaBF6B5vKLkseusWVIxkueWuI4qFnmQHXVmXjbGrki3pVKHWOZ6jYgnNQyRjBCoIAsTg/LJyJDsI56k5muB1hV+w3D1xabUeqUgL4Un6zCcECuY71mk7eBq7Yqf41H7eUD3VPIiSVHX52OUJG+32QjN1l+33410/vsTqKSMJw+QYAk1SQ9LCZ+y6ywG/kLcKKhSNRDrZLid66JURBsckb0ZnJ2mP+GDn6nUyBFVAh4FMwzIGjmNCHtgGuUkWgzsFeXD+ezpwv3ve6JcpQQ8nLNUNrlRV94FtraAezkFNWuZi7pLzJKImTiVljJ/9NF
+|1|wbkwj4LS2+yA7lbSN8X4nTsjA+Y=|RD7rtGqGaLptcRh0cLuSGK9J4gI= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCanTV2mznbvU+S+aOPnoXzNBLaBF6B5vKLkseusWVIxkueWuI4qFnmQHXVmXjbGrki3pVKHWOZ6jYgnNQyRjBCoIAsTg/LJyJDsI56k5muB1hV+w3D1xabUeqUgL4Un6zCcECuY71mk7eBq7Yqf41H7eUD3VPIiSVHX52OUJG+32QjN1l+33410/vsTqKSMJw+QYAk1SQ9LCZ+y6ywG/kLcKKhSNRDrZLid66JURBsckb0ZnJ2mP+GDn6nUyBFVAh4FMwzIGjmNCHtgGuUkWgzsFeXD+ezpwv3ve6JcpQQ8nLNUNrlRV94FtraAezkFNWuZi7pLzJKImTiVljJ/9NF" >> /etc/ssh/ssh_known_hosts
+      # lexx
+      echo "|1|pxruz/yekVaEQpmr9aXFnVXS+zo=|FUBrFozp8mCR1Tg5DBMmd8JCHGA= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6wZ+MkZ6Z2r4ndsJBsCWNK0bYrq1sIoOcY7fxIC0jQOkQXrkpZRn26CW65aGs4C9JtAvPXQLZzNVcrGmAYcj8fSttelCa28D091OdphlmPKGF8neN75b3nSR0TIGo3DuHa/1Z8aRvS41eK8hvMQNm33NEd4tXvNr4GDEjZqBgP6r/IpUChABfSwMJ/OOX65R2vco3FFDesjmwRgLq6koPAe4xnugpJaLQ2jySHGx6tAW0EkeKACUYT18H0hyLSIrQdeLe0uJ5ZchIFuTxiSX/PIsllWeo41beKJx8YJcoAjIu9qnBW61XicDAGEHPQy5Vkocip09ZF3mk/1TvsUdB
+|1|Zt+UQInZ4wLyqdyhAt5VkRGKSaM=|jkLRqa8kXe9CH0ZDuCOb7y/JpWk= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6wZ+MkZ6Z2r4ndsJBsCWNK0bYrq1sIoOcY7fxIC0jQOkQXrkpZRn26CW65aGs4C9JtAvPXQLZzNVcrGmAYcj8fSttelCa28D091OdphlmPKGF8neN75b3nSR0TIGo3DuHa/1Z8aRvS41eK8hvMQNm33NEd4tXvNr4GDEjZqBgP6r/IpUChABfSwMJ/OOX65R2vco3FFDesjmwRgLq6koPAe4xnugpJaLQ2jySHGx6tAW0EkeKACUYT18H0hyLSIrQdeLe0uJ5ZchIFuTxiSX/PIsllWeo41beKJx8YJcoAjIu9qnBW61XicDAGEHPQy5Vkocip09ZF3mk/1TvsUdB" >> /etc/ssh/ssh_known_hosts
+      # pegasus
+      echo "|1|Kedf2j3Y+Jju+PUM5Fp7CY3N6e8=|0acHoiFlBDIUoukK3UggiHDVwZ0= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRv4sS+csUZMTdl6MU6IwRw6kkHn1zVscwn0THJ1NKIIw3gqaqDlz4UCLBNZsTbJiYW2hdZWiCbHVQ/4R43Gzc3jK5zCBxoWYsgOp1sz3GmbR67k9sy9uPN37NM36fC6MrW+76uT9GI8Wd5rNXth0eCeijvYY1PR8YJly+1VoQzbrj/N5a9ujksPOBbx1JoT5P0ZlOrRumjMAVPNWs3IVCPBBTSszEmAeMrYs8Wi4sNy0169I2pt60xig2Eccm/+nIiZOfD5tyOpOLtgHH4Ich8eN7URQBAq/bNTWZR4ckUjdqEOR2wsi/yazbexyy4FmGwcpTIrz2TFVhfl8Rr2nl
+|1|4e72fd3cj9n0v7O06nhOTRfdJeA=|cOtkd12zIF2w7zj85dty1bLrygY= ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRv4sS+csUZMTdl6MU6IwRw6kkHn1zVscwn0THJ1NKIIw3gqaqDlz4UCLBNZsTbJiYW2hdZWiCbHVQ/4R43Gzc3jK5zCBxoWYsgOp1sz3GmbR67k9sy9uPN37NM36fC6MrW+76uT9GI8Wd5rNXth0eCeijvYY1PR8YJly+1VoQzbrj/N5a9ujksPOBbx1JoT5P0ZlOrRumjMAVPNWs3IVCPBBTSszEmAeMrYs8Wi4sNy0169I2pt60xig2Eccm/+nIiZOfD5tyOpOLtgHH4Ich8eN7URQBAq/bNTWZR4ckUjdqEOR2wsi/yazbexyy4FmGwcpTIrz2TFVhfl8Rr2nl" >> /etc/ssh/ssh_known_hosts
+
+      chmod +r /etc/ssh/ssh_known_hosts
+
+      # fix update-apt-xapian-index to eat all resources
+      #sed -i 's/nice \$IONICE -c3 \$CMD --quiet/nice -n 19 \$IONICE -c 3 \$CMD --update --quiet/' /etc/cron.weekly/apt-xapian-index # <= lucid only
+      #sed -i 's/nice \$CMD --quiet/nice -n 19 \$CMD --update --quiet/' /etc/cron.weekly/apt-xapian-index # <= lucid only
+      sed -i 's/nice ionice -c3 update-apt-xapian-index -q/nice -n 19 ionice -c 3 update-apt-xapian-index -u -q/' /etc/cron.daily/apt
+
+      # prevent printer from stopping
+      sudo sed -i -e 's/^ErrorPolicy .*/ErrorPolicy abort-job/' /etc/cups/printers.conf
+      sudo sed -i -e 's/^State .*/State idle/' /etc/cups/printers.conf
+      service cups stop
+      service cups start
+
+      #dconf override 
+      echo "[org.gnome.desktop.interface]" > /usr/share/glib-2.0/schemas/stura.gschema.override
+      echo "menus-have-icons=true" >> /usr/share/glib-2.0/schemas/stura.gschema.override
+      
+      echo "[com.canonical.indicator.datetime]" >> /usr/share/glib-2.0/schemas/stura.gschema.override
+      echo "show-date=true" >> /usr/share/glib-2.0/schemas/stura.gschema.override
+      echo "show-week-numbers=true" >> /usr/share/glib-2.0/schemas/stura.gschema.override
+ 
+      glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+      #etckeeper config
+      echo 'VCS="bzr"
+HIGHLEVEL_PACKAGE_MANAGER=apt
+LOWLEVEL_PACKAGE_MANAGER=dpkg
+BZR_COMMIT_OPTIONS="--unchanged"' > /etc/etckeeper/etckeeper.conf
+
+      # puppet
+      grep puppet /etc/hosts
+      if [ $? -ne 0 ]; then
+        echo "141.24.40.67 puppet" >> /etc/hosts
+      fi
+      service puppet stop
+      sed -i 's/START=yes/START=no/' /etc/default/puppet
+      puppet resource cron puppet-agent ensure=present user=root minute=30 command='/usr/bin/puppet agent --onetime --no-daemonize --splay'
+
+      # *** add tmpfs for gdm cache ***
+      grep "/var/tmp" /etc/fstab
+      if [ $? -ne 0 ]; then
+        echo "tmpfs   /var/tmp  tmpfs   defaults        0       2" >> /etc/fstab
+      fi
+      grep "/var/cache/gdm" /etc/fstab
+      if [ $? -ne 0 ]; then
+        echo "tmpfs   /var/cache/gdm  tmpfs   defaults        0       2" >> /etc/fstab
+      fi
+      grep "/var/cache/lightdm" /etc/fstab
+      if [ $? -ne 0 ]; then
+        echo "tmpfs   /var/cache/lightdm  tmpfs   defaults        0       2" >> /etc/fstab
+      fi
+      grep "/var/cache/cups" /etc/fstab
+      if [ $? -ne 0 ]; then
+        echo "tmpfs   /var/cache/cups  tmpfs   defaults        0       2" >> /etc/fstab
+      fi
+
+      # ssl samba access
+      mkdir -p /etc/stunnel
+echo "-----BEGIN CERTIFICATE-----
+MIIF8DCCA9gCCQCaDko17ijkGzANBgkqhkiG9w0BAQUFADCBuTELMAkGA1UEBhMC
+REUxEDAOBgNVBAgMB0dlcm1hbnkxEDAOBgNVBAcMB0lsbWVuYXUxKjAoBgNVBAoM
+IVN0dWRpZXJlbmRlbnNjaGFmdCBkZXIgVFUgSWxtZW5hdTETMBEGA1UECwwKUmVm
+ZXJhdCBJVDEgMB4GA1UEAwwXYmFja3VwLXN0b3JhZ2UuYS1rZWxsZXIxIzAhBgkq
+hkiG9w0BCQEWFHJlZi1pdEB0dS1pbG1lbmF1LmRlMB4XDTE0MDEwNTE2NTIzMFoX
+DTI0MDEwMzE2NTIzMFowgbkxCzAJBgNVBAYTAkRFMRAwDgYDVQQIDAdHZXJtYW55
+MRAwDgYDVQQHDAdJbG1lbmF1MSowKAYDVQQKDCFTdHVkaWVyZW5kZW5zY2hhZnQg
+ZGVyIFRVIElsbWVuYXUxEzARBgNVBAsMClJlZmVyYXQgSVQxIDAeBgNVBAMMF2Jh
+Y2t1cC1zdG9yYWdlLmEta2VsbGVyMSMwIQYJKoZIhvcNAQkBFhRyZWYtaXRAdHUt
+aWxtZW5hdS5kZTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBAL3KE3Dg
+dCAFo8J+3I0IsduyEMmRl0BuISV3a2n8Dp/35vuN4yxTfEmSZNRy16+MXvTx6kzn
+FIma7gL9FKtbBFRlcWVcAHNb/LG8OKCj96smY3AClbzcoNaSGR71LkPC2QNPSSGC
+PIrndb2sbllYNP4MAqcLjc8bRWSfSTUikDfy0seyzfSLmIMas21AVTz0dO3NgazX
+Fcrd+LaK/SkKxGZnDKGKdB/O+qQY0XcUx+Rh7yxho6pL5VUd42KQnDkbhhXXiApK
+/5SYQlVmZX5mbUwQX2qsJgRAdTqpA0NbII95ggL1DWztcWsHmkdg2ktAwu97pyiK
+C0Gbjx+6CtLjz/zCh9hg/R4E9vRP1KHo3YwxsFqiBNi+uIlVajRP/+C5ppAUti1L
+U/iObLo8JAx5IlreVTbTYQRRphmdScAEMMRcajk3nd0n8qbR9pQ6cOse3rl3pAUa
++WTGxOpFEWqrzYs3JS2399LuctzZasUugIJrj06NT0TIwduhEhelSIjrr1DI5U7Y
+sLa1/aAfH9+pmZGCyMz/jC06dLHZfVpMEfTdkybSircvJBxjNQZ9L9eKx505EeOe
+hNTcD/vNoKdjqcZN6ncR8xOedmrWYdg/+Fj0ab/3OqJts5JEyJYTn7qcgEr4lIWA
+H5N9o0VB65wUQ3AmVTaJTZVJTJZH4hIIIDanAgMBAAEwDQYJKoZIhvcNAQEFBQAD
+ggIBAFVEYBJwjgsvpb9MzZS4fJNSjdsoDRnSzCDDARmrFjdli3OMEhxB29wLSy4E
+2/xI22XZ1dH1qYwX6r4PpmIiLlDwU2jN6vgI5Z2/M1aiuJJm1Y6xPUDs7PAl+zV/
+fRxL/MvxsZD+GKG7vqk/fKuZLzzzv0VfZbqB0S+wUr8ym1W4jZf0INf+befQKepR
+AJXrc3BqQ2TpEnnEzUS3sj0YD4E4cbUcWNx4ZWC74Ulszi4tOBAAvMuLMAcO6HyU
+/YXdFu5YpaqJp4e+oh/A9/uepb08VH8Ru2AhxPDMld2wJNMYOIMuGEICSNKJHFq0
+XuiIQOe/7aJ/wf/dvDICAs1qh2XiwroYG6a2zQDBkBbRipu6HKr+Kh8aeNTd085F
+AsDwn3Uhdor66zpcBr8tz/Den2xWelzPE/UaIGtHWDsdEtu6kl6euosO87WLkFRN
+UC4sk6KozY35XteTnDgPD9NbYTRL/MOFRuKUIdW8IN1s16hgtUg3kIQuNg3yTToI
+gpmtjaACUQqk4ftkVuSgvaoyYq36mTUp10XV01AO/5L3MnP5LhoP1ZWHM6853Iah
+e9ODCQTzMJQ5Ii2rrhf5TSl/DXuSP5EHixOe3E1qMxci10S2JZKcQpy575DsqMrx
+ACKCcZl63FubmoXNQzanpR2KuGttW2FvZqNhyruVbTN7eBGG
+-----END CERTIFICATE-----
+" > /etc/stunnel/samba.crt
+
+echo "
+verify = 2
+CAfile = /etc/stunnel/samba.crt
+
+; Disable support for insecure SSLv2 protocol
+options = NO_SSLv2
+; Workaround for Eudora bug
+;options = DONT_INSERT_EMPTY_FRAGMENTS
+
+; The following options provide additional security at some performance penalty
+; Default ECDH/DH parameters are strong/conservative, so it is quite safe to
+; comment out these lines in order to get a performance boost
+options = SINGLE_ECDH_USE
+options = SINGLE_DH_USE
+
+[smb139]
+client = yes
+accept  = 127.0.0.1:139
+connect = 141.24.40.67:8139
+
+[smb445]
+client = yes
+accept  = 127.0.0.1:445
+connect = 141.24.40.67:8445
+" > /etc/stunnel/samba.conf 
+
+    sed -i 's/^ENABLED=0$/ENABLED=1/' /etc/default/stunnel4
+
+    service stunnel4 restart
+
+    ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+# dh_installdeb will replace this with shell code automatically
+# generated by other debhelper scripts.
+
+
+
+# vim: set ts=2  sw=2 expandtab:
+
+exit 0

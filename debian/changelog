@@ -1,0 +1,679 @@
+stura-autoconf (0.0.1-97) precise; urgency=low
+
+  * add sensord (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Mon, 23 Sep 2013 18:27:00 +0100
+
+stura-autoconf (0.0.1-96) precise; urgency=low
+
+  * rm hovergate.a-keller (postinst/ntp)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 23 Jul 2013 18:28:00 +0100
+
+stura-autoconf (0.0.1-95) precise; urgency=low
+
+  * add disper and ncpfs (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 23 Jul 2013 14:16:00 +0100
+
+stura-autoconf (0.0.1-94) precise; urgency=low
+
+  * add vmware-view-open-client (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 23 Jul 2013 10:10:00 +0100
+
+stura-autoconf (0.0.1-93) precise; urgency=low
+
+  * start-stop-stura.sh: bugfix
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Mon, 22 Jul 2013 15:15:00 +0100
+
+stura-autoconf (0.0.1-92) precise; urgency=low
+
+  * add tmpfs for /var/cache/cups (postinst)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Wed, 26 Jun 2013 15:15:00 +0100
+
+stura-autoconf (0.0.1-91) precise; urgency=low
+
+  * rm mozilla-plugin-vlc (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Wed, 12 Jun 2013 15:55:00 +0100
+
+stura-autoconf (0.0.1-90) precise; urgency=low
+
+  * update virtualbox-guest-additions to virtualbox-guest-additions-iso (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Tue, 11 Jun 2013 16:16:00 +0100
+
+stura-autoconf (0.0.1-89) precise; urgency=low
+
+  * update mozilla-plugin-vlc to browser-plugin-vlc (depends)
+  * update virtualbox-ose to virtualbox (depends)
+  * update git-core to git (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Tue, 11 Jun 2013 15:15:00 +0100
+
+stura-autoconf (0.0.1-88) precise; urgency=low
+
+  * add [com.canonical.indicator.datetime] show-date=true (dconf override)
+  * add [com.canonical.indicator.datetime] show-week-numbers=true (dconf override)
+  * add indicator-printers (depends)
+  
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Tue, 04 Jun 2013 21:21:00 +0100
+
+stura-autoconf (0.0.1-87) precise; urgency=low
+
+  * rm ntp.fem.tu-ilmenau.de (ntp config)
+  * add debsums, python-gpgme (depends)
+  
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Tue, 28 May 2013 07:07:00 +0100
+
+stura-autoconf (0.0.1-86) precise; urgency=low
+
+  * start-stop-stura.sh: mv $DIR if rmdir does not work
+  * add dpkg-dev, dput, debhelper (depends)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 16 May 2013 18:18:00 +0100
+
+stura-autoconf (0.0.1-85) precise; urgency=high
+
+  * partner to autoupdate
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 28 Mar 2013 12:20:00 +0100
+
+stura-autoconf (0.0.1-84) precise; urgency=high
+
+  * add hostname to local list for postfix
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Wed, 6 Mar 2013 15:20:00 +0100
+
+stura-autoconf (0.0.1-83) precise; urgency=high
+
+  * fix typo
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 1 Mar 2013 19:49:00 +0100
+
+stura-autoconf (0.0.1-82) precise; urgency=high
+
+  * disable autologin if requested
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 1 Mar 2013 19:49:00 +0100
+
+stura-autoconf (0.0.1-81) precise; urgency=high
+
+  * fix lightdm/gdm login cache
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 28 Feb 2013 16:49:00 +0100
+
+stura-autoconf (0.0.1-80) precise; urgency=low
+
+  * fix puppet logic
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 28 Feb 2013 10:49:00 +0100
+
+stura-autoconf (0.0.1-79) precise; urgency=low
+
+  * add puppet cron
+  * fix sudoers.d
+  * update start-stop-stura for owncloud
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 19 Feb 2013 18:22:00 +0100
+
+stura-autoconf (0.0.1-78) precise; urgency=low
+
+  * remove puppet cron
+  * use sudoers.d
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 19 Feb 2013 18:22:00 +0100
+
+stura-autoconf (0.0.1-77) precise; urgency=low
+
+  * fix puppet dns
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 19 Feb 2013 12:22:00 +0100
+
+stura-autoconf (0.0.1-76) precise; urgency=low
+
+  * enable puppet
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 19 Feb 2013 12:22:00 +0100
+
+stura-autoconf (0.0.1-75) precise; urgency=low
+
+  * software: add screen
+  * repo: add dropbox
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 19 Feb 2013 12:12:00 +0100
+
+stura-autoconf (0.0.1-74) precise; urgency=low
+
+  * login: fix autologin session
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 20:12:00 +0100
+
+stura-autoconf (0.0.1-73) precise; urgency=low
+
+  * login: install gnome-fallback session
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 20:12:00 +0100
+
+stura-autoconf (0.0.1-72) precise; urgency=low
+
+  * login: install gnome-fallback session
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 20:12:00 +0100
+
+stura-autoconf (0.0.1-71) precise; urgency=low
+
+  * printer: hide lpstat errors on non-existing printers
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 19:12:00 +0100
+
+stura-autoconf (0.0.1-70) precise; urgency=low
+
+  * gaststick: prepare session hooks
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-69) precise; urgency=low
+
+  * mail: use ref-it@tu-ilmenau.de for sender address, catch all cases
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-68) precise; urgency=low
+
+  * mail: use ref-it@tu-ilmenau.de for sender address
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-67) precise; urgency=low
+
+  * mail: fix typo
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-66) precise; urgency=low
+
+  * mail: fix sender address, use tls
+  * software: install postfix-pcre
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-65) precise; urgency=low
+
+  * software: install openvpn
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-64) precise; urgency=low
+
+  * update: automatically fix interrupted dpkg --configure
+  * mail: use sasl_passwd with postfix if installed
+  * ntp: update ntp server for a-keller
+  * mail: change subject to contain hostname
+  * login: use lightdm instead of gdm
+  * login: use numlockx
+  * software: install puppet, lightdm, numlockx, -gdm
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 16:43:00 +0100
+
+stura-autoconf (0.0.1-63) precise; urgency=low
+
+  * update start-stop-stura.sh to solve unmount problems with zenity
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Mon, 03 Dez 2012 02:00:00 +0100
+
+stura-autoconf (0.0.1-71) precise; urgency=low
+
+  * printer: hide lpstat errors on non-existing printers
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 19:12:00 +0100
+
+stura-autoconf (0.0.1-70) precise; urgency=low
+
+  * gaststick: prepare session hooks
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-69) precise; urgency=low
+
+  * mail: use ref-it@tu-ilmenau.de for sender address, catch all cases
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-68) precise; urgency=low
+
+  * mail: use ref-it@tu-ilmenau.de for sender address
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-67) precise; urgency=low
+
+  * mail: fix typo
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-66) precise; urgency=low
+
+  * mail: fix sender address, use tls
+  * software: install postfix-pcre
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-65) precise; urgency=low
+
+  * software: install openvpn
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 17:43:00 +0100
+
+stura-autoconf (0.0.1-64) precise; urgency=low
+
+  * update: automatically fix interrupted dpkg --configure
+  * mail: use sasl_passwd with postfix if installed
+  * ntp: update ntp server for a-keller
+  * mail: change subject to contain hostname
+  * login: use lightdm instead of gdm
+  * login: use numlockx
+  * software: install puppet, lightdm, numlockx, -gdm
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 18 Feb 2013 16:43:00 +0100
+
+stura-autoconf (0.0.1-63) precise; urgency=low
+
+  * update start-stop-stura.sh to solve unmount problems with zenity
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Mon, 03 Dez 2012 02:00:00 +0100
+
+stura-autoconf (0.0.1-62) precise; urgency=low
+
+  * remove cinnamon ppa (postinst)
+  * add etckeeper.conf (postinst)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Fri, 09 Nov 2012 02:00:00 +0100
+
+stura-autoconf (0.0.1-61) precise; urgency=low
+
+  * add dconf override (postinst)
+  * add puppet (depends)
+  * remove tmpfs for gdm (postinst)
+  * update printer-restart-stura.bash
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 02 Oct 2012 19:00:00 +0100
+
+stura-autoconf (0.0.1-60) precise; urgency=low
+
+  * add cinnamon ppa
+  * update scibus repo
+  * remove fraiser from postfix conf
+  + remove update-java-alternatives
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 13 Sep 2012 19:00:00 +0100
+
+stura-autoconf (0.0.1-59) precise; urgency=low
+
+  * rm libreoffice-report-builder
+  * rm qgis
+  * rm qgis-plugin-grass
+  * rm python-qgis
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 13 Sep 2012 18:30:00 +0100
+
+stura-autoconf (0.0.1-58) precise; urgency=low
+
+  * Initial release for precise
+  * rm xul-ext-adblock-plus
+  * rm xul-ext-flashblock
+  * rm sun-java6-jdk
+  * rm sun-java6-plugin
+  * rm scribus-ng
+  * rm scribus-ng-doc
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 13 Sep 2012 18:00:00 +0100
+
+stura-autoconf (0.0.1-57) natty; urgency=low
+
+  * update key
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 18 Jun 2012 10:00:00 +0100
+
+stura-autoconf (0.0.1-56) natty; urgency=low
+
+  * add stgit
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 13 Mar 2012 10:00:00 +0100
+
+stura-autoconf (0.0.1-55) natty; urgency=low
+
+  * add qgis
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 10 Mar 2012 10:00:00 +0100
+
+stura-autoconf (0.0.1-54) natty; urgency=low
+
+  * fix permissions on /etc/shadow
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 28 Feb 2012 10:00:00 +0100
+
+stura-autoconf (0.0.1-53) natty; urgency=low
+
+  * ensure email alias for all local users
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 24 Feb 2012 18:00:00 +0100
+
+stura-autoconf (0.0.1-52) natty; urgency=low
+
+  * add latexdiff + wdiff for AG Ordnungen
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 21 Feb 2012 18:00:00 +0100
+
+stura-autoconf (0.0.1-51) natty; urgency=low
+
+  * add gnucash
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 7 Feb 2012 10:00:00 +0100
+
+stura-autoconf (0.0.1-50) natty; urgency=low
+
+  * improve scribus key management
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 27 Jan 2012 20:00:00 +0100
+
+stura-autoconf (0.0.1-49) natty; urgency=low
+
+  * fix key for scribus ppa
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 25 Jan 2012 20:00:00 +0100
+
+stura-autoconf (0.0.1-48) natty; urgency=low
+
+  * add scribus ppa for new stable scribus version
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 25 Jan 2012 20:00:00 +0100
+
+stura-autoconf (0.0.1-47) natty; urgency=low
+
+  * fix crontab entry
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 13 Jan 2012 20:00:00 +0100
+
+stura-autoconf (0.0.1-46) natty; urgency=low
+
+  * update start-stop-stura.sh to set idmap=user,uid=,gid= fixes issues with
+    uid translation
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 05 Jan 2012 20:00:00 +0100
+
+stura-autoconf (0.0.1-45) natty; urgency=low
+
+  * update start-stop-stura.sh to erase empty dir, fixes issues if directory was mounted during shutdown
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 05 Jan 2012 17:00:00 +0100
+
+stura-autoconf (0.0.1-44) natty; urgency=low
+
+  * small restart-printer-stura.bash script update
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 22 Dec 2011 17:00:00 +0100
+
+stura-autoconf (0.0.1-43) natty; urgency=low
+
+  * add restart-printer-stura.bash script and cronjob
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 22 Dec 2011 16:00:00 +0100
+
+stura-autoconf (0.0.1-42) natty; urgency=low
+
+  * add pcs to ssh known hosts
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Wed, 21 Dec 2011 17:00:00 +0100
+
+stura-autoconf (0.0.1-41) natty; urgency=low
+
+  * upgrade start-stop-stura.sh to zenity version
+  * add phatch 
+  * switch from openoffice to libreoffice (mythes-de, hyphen-de)
+  * add "Speicherklumpen" to ssh known hosts
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Wed, 21 Dec 2011 16:00:00 +0100
+
+stura-autoconf (0.0.1-40) natty; urgency=low
+
+  * add jdk
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Nov 2011 20:03:26 +0100
+
+stura-autoconf (0.0.1-39) natty; urgency=low
+
+  * replace flashplugin-installer and fix automatic updates for medibuntu, dropbox und stura ppa
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Nov 2011 20:03:26 +0100
+
+stura-autoconf (0.0.1-38) natty; urgency=low
+
+  * switch from flashplugin-installer to adobe-flashplugin from partner repository
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Fri, 23 Sep 2011 21:00:00 +0100
+
+stura-autoconf (0.0.1-37) natty; urgency=low
+
+  * switch to native adobe flash plugin from partner repository
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 29 Oct 2011 16:03:26 +0100
+
+stura-autoconf (0.0.1-36) natty; urgency=low
+
+  * add kyoscand
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Fri, 23 Sep 2011 21:00:00 +0100
+
+stura-autoconf (0.0.1-35) natty; urgency=low
+
+  * add ktouch, khelpcenter4, mypaint
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Fri, 23 Sep 2011 13:00:00 +0100
+
+stura-autoconf (0.0.1-33) natty; urgency=low
+
+  * add tmpfs for /var/cache/gdm
+  * add tmpfs for /var/tmp
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 8 Aug 2011 20:57:26 +0100
+
+stura-autoconf (0.0.1-32) natty; urgency=low
+
+  * add xul-ext-adblock-plus
+  * sort Depends and removed duplicates
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 30 Jun 2011 23:39:26 +0100
+
+stura-autoconf (0.0.1-31) natty; urgency=low
+
+  * replaced dependencies icedtea6-plugin with sun-java6-plugin (issue 0000093)
+  * add update-java-alternatives to postinst (issue 0000093)
+
+ -- Robert Utnehmer <robert.utnehmer@tu-ilmenau.de>  Thu, 23 Jun 2011 07:24:26 +0100
+
+stura-autoconf (0.0.1-30) natty; urgency=low
+
+  * add whitedune-docs, whitedune
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Tue, 14 Jun 2011 07:24:26 +0100
+
+stura-autoconf (0.0.1-29) natty; urgency=low
+
+  * add etckeeper and kalarm
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 23 May 2011 07:24:26 +0100
+
+stura-autoconf (0.0.1-28) natty; urgency=low
+
+  * add jabref-plugin-oo jabref for benni
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Wed, 11 May 2011 15:24:26 +0100
+
+stura-autoconf (0.0.1-27) natty; urgency=low
+
+  * add audacity to dependencies
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 6 May 2011 19:24:26 +0100
+
+stura-autoconf (0.0.1-26) natty; urgency=low
+
+  * resolve dependency issues with natty not to be easily fixed by providing
+    the required packaages
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 5 May 2011 19:24:26 +0100
+
+stura-autoconf (0.0.1-25) natty; urgency=low
+
+  * go to natty
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 29 Apr 2011 19:24:26 +0100
+
+stura-autoconf (0.0.1-24) maverick; urgency=low
+
+  * add iswi shares
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Thu, 21 Apr 2011 19:24:26 +0100
+
+stura-autoconf (0.0.1-23) maverick; urgency=low
+
+  * prevent printers from going stopped because of disconnected printer
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 12 Apr 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-22) maverick; urgency=low
+
+  * add openclipart and some openoffice extensions
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 10 Apr 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-21) maverick; urgency=low
+
+  * replace call to update-apt-xapian-index to use --update in
+    /etc/cron.daily/apt. This saves a lot of resources.
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 28 Mar 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-20) maverick; urgency=low
+
+  * remove non existing package from depends
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sat, 26 Mar 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-19) maverick; urgency=low
+
+  * add extundelete
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sat, 26 Mar 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-18) maverick; urgency=low
+
+  * add more pulse audio tools
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sat, 26 Mar 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-17) maverick; urgency=low
+
+  * add pulse audio via network tools
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sat, 26 Mar 2011 11:24:26 +0100
+
+stura-autoconf (0.0.1-16) maverick; urgency=low
+
+  * add bouml
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 25 Mar 2011 14:24:26 +0100
+
+stura-autoconf (0.0.1-15) maverick; urgency=low
+
+  * add kile-doc, kde-l10n-de
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Wed, 23 Mar 2011 14:24:26 +0100
+
+stura-autoconf (0.0.1-14) maverick; urgency=low
+
+  * add xvnc4viewer
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 18 Mar 2011 14:24:26 +0100
+
+stura-autoconf (0.0.1-13) maverick; urgency=low
+
+  * add biblatex biblatex-dw for Benni
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 18 Mar 2011 14:24:26 +0100
+
+stura-autoconf (0.0.1-12) maverick; urgency=low
+
+  * add pdfchain for Andi
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 18 Mar 2011 12:47:26 +0100
+
+stura-autoconf (0.0.1-11) maverick; urgency=low
+
+  * add qtiplot for Benni
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Fri, 18 Mar 2011 11:31:26 +0100
+
+stura-autoconf (0.0.1-10) maverick; urgency=low
+
+  * add distcc
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 14 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-9) maverick; urgency=low
+
+  * fix home dir if user is already logged in
+  * add fonts
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 07 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-8) maverick; urgency=low
+
+  * fix home dir
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 07 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-7) maverick; urgency=low
+
+  * fix strange issue
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 07 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-6) maverick; urgency=low
+
+  * add pre-depends to depends
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 07 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-5) maverick; urgency=low
+
+  * add lldpd
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Mon, 07 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-4) maverick; urgency=low
+
+  * fix set -e issue
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-3) maverick; urgency=low
+
+  * fix ln issue
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-2) maverick; urgency=low
+
+  * fix build issues
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Mar 2011 19:13:26 +0100
+
+stura-autoconf (0.0.1-1) maverick; urgency=low
+
+  * Initial release
+
+ -- Michael Braun <michael-dev@fami-braun.de>  Sun, 06 Mar 2011 19:13:26 +0100
